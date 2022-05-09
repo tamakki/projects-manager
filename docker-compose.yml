@@ -18,29 +18,25 @@ services:
       - app-network
   restapi:
     container_name: project-manager-api
-    build:
-      context: .
-      dockerfile: ./docker/api/Dockerfile
+    image: node:16.13.0-alpine3.12
     ports:
       - 5656:5656
-    tty: true
-    user: ${UID}:${GID}
     volumes:
       - ./api/:/app/
+    working_dir: /app
     command: sh -c "npm install && npm run start"
     networks:
       - app-network
     depends_on:
       - mongo
   react:
-    build:
-      context: .
-      dockerfile: ./docker/app/Dockerfile
+    image: node:16.13.0-alpine3.12
     container_name: project-manager-app
     ports:
       - 3000:3000
     volumes:
       - ./app:/usr/src/app
+    working_dir: /usr/src/app
     command: sh -c "npm install && npm start"
     tty: true
     stdin_open: true
