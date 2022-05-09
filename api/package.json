@@ -1,0 +1,14 @@
+{
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node test-mongo.js"
+  },
+  "author": "Tamaki Nakamura",
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^4.5.0"
+  }
+}

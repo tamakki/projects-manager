@@ -1,0 +1,53 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:4.2.5-bionic
+    container_name: projects-manager-db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/db:/data/db
+    command:
+      - mongod
+    networks:
+      - app-network
+  restapi:
+    container_name: project-manager-api
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    ports:
+      - 5656:5656
+    tty: true
+    user: ${UID}:${GID}
+    volumes:
+      - ./api/:/app/
+    command: sh -c "npm install && npm run start"
+    networks:
+      - app-network
+    depends_on:
+      - mongo
+  react:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    container_name: project-manager-app
+    ports:
+      - 3000:3000
+    volumes:
+      - ./app:/usr/src/app
+    command: sh -c "npm install && npm start"
+    tty: true
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    # depends_on:
+    #   - restapi
+networks:
+  app-network:
+    external: true
